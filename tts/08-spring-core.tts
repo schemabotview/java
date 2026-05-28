@@ -1,0 +1,93 @@
+Welcome to notebook eight of the Java track. This is the first Spring notebook, and the topic for this session is Spring Core. The fundamental machinery that everything else in Spring is built on. Notebook seven gave us annotations and reflection, the building blocks. This notebook shows you what a real framework does with those building blocks. By the end you will understand the engine that the rest of the Spring track sits on, namely inversion of control, dependency injection, the application context, and the bean lifecycle.
+
+Here is the map for what we will cover. First, the problem Spring solves, which is the pain of manual wiring in a real codebase. Then the central ideas. Inversion of control and dependency injection, the two names for the same pattern. The application context, which is the Spring container. Beans, which are the objects Spring manages. Component scanning, with the four stereotype annotations, at sign Component, at sign Service, at sign Repository, and at sign Controller. Configuration classes, with at sign Configuration and at sign Bean. The three injection styles, namely constructor, setter, and field, and why constructor injection wins. Bean scopes, including singleton, prototype, request, and session. The bean lifecycle, with at sign Post Construct and at sign Pre Destroy. Profiles, with at sign Profile, for wiring different beans per environment. Externalised configuration, with at sign Value, the Environment object, and the much better at sign Configuration Properties. Aspect oriented programming, with aspects, advice, pointcuts, and join points. The at sign Aspect annotation and the advice annotations, at sign Before, at sign After, and at sign Around. And finally, application context events, with at sign Event Listener and the Application Event Publisher.
+
+Let us start with the problem Spring solves. Imagine a small service. A payment controller needs a payment service. The payment service needs a payment repository and a fraud check. The fraud check needs an h t t p client and a rule engine. Each of those needs its own configuration to be constructed. Without help, you write a wiring section somewhere that calls new on each one in dependency order, threading the constructed instances through each subsequent constructor call.
+
+Multiply that pattern by every component in a real service. The wiring becomes the largest, ugliest, most fragile file in the project. Every time you add a constructor parameter to one class, every caller has to change. Every component knows how to build its own dependencies, with concrete classes and concrete config, so swapping for a test or a different environment requires rewriting the constructor calls.
+
+Spring takes over that wiring. You describe each component once. You declare what it needs. Spring builds the graph for you. That is the entire pitch of the framework, in two sentences.
+
+The pattern has two names that often get used interchangeably. Inversion of control means your code no longer controls when and how its dependencies get created. The framework does. Dependency injection is the specific technique by which the framework supplies a component's dependencies, usually by passing them to its constructor. The two names point at the same idea from different angles. The inversion of control name emphasises the shift in control. The dependency injection name emphasises the technique.
+
+The benefit is not shorter code. The benefit is swappability. You can wire a fake database for tests, a different database for staging, and the real database in production, all without touching any of the service classes that use the database. The components describe what they need. The wiring describes which concrete thing satisfies the need. The two concerns are decoupled.
+
+Every Spring application has an application context. The application context is the container that holds every Spring managed object, every bean, looks them up by type or name, manages their lifecycle, and broadcasts events to them. Beans are registered in the application context by name and by type. The container resolves the dependency graph, instantiates the beans in dependency order, and injects what each bean needs.
+
+You do not construct beans yourself. You tell Spring which classes are beans. You tell Spring what each one depends on. Spring does the rest.
+
+The simplest way to register a bean is to put the at sign Component annotation on the class. When Spring's component scanner walks the classpath, it picks up every class with at sign Component, or any annotation that is itself meta annotated with at sign Component, and registers an instance as a bean. The four annotations you will use ninety percent of the time are at sign Component, at sign Service, at sign Repository, and at sign Controller. All four are themselves at sign Component, just with different stereotype names that signal the role of the class.
+
+At sign Component is the generic Spring managed bean. At sign Service signals a business logic or domain service. At sign Repository signals a data access object. At sign Repository also enables automatic translation of low level data access exceptions, like j d b c exceptions, into Spring's data access exception hierarchy. At sign Controller and its more specialised cousin at sign Rest Controller signal a web layer class that handles hypertext transfer protocol requests.
+
+The differences in behaviour between the four are small. At sign Repository adds exception translation. At sign Controller adds web routing. The differences in intent are what matter. They tell the reader what layer a class belongs to. Use the most specific one that fits.
+
+The bean name defaults to the class name with a lower cased first letter. So Payment Service becomes the bean named payment Service. Payment Repository becomes payment Repository. You would almost never refer to that name directly, however, because Spring injects by type. The name is only relevant when you have two beans of the same type and need to disambiguate.
+
+When you want to register a bean for a class you do not own, like an s d k class from a third party library, you cannot put at sign Component on it. For those, write a configuration class. A configuration class is annotated at sign Configuration. Inside the class, you write methods annotated at sign Bean. Each at sign Bean method returns an instance of the bean type, and Spring registers the returned object as a bean.
+
+A configuration class is itself a component, so Spring picks it up during scanning. Each at sign Bean method's parameters become dependencies that Spring will resolve from the container and pass in. This is the explicit form of dependency injection. The method body is your factory code, where you can write any logic you need to construct the bean.
+
+Now, the three injection styles. Constructor injection, setter injection, and field injection. Spring supports all three. Two of them are mistakes.
+
+Constructor injection is the preferred style. You declare the dependencies as parameters of the class's constructor. You assign them to final fields. The class has no setter, no public mutator for those dependencies. When the class has a single constructor, which is the norm in this style, Spring autowires it implicitly. The at sign Autowired annotation is only needed when you have multiple constructors and want Spring to pick one specifically.
+
+Setter injection means declaring a public setter for each dependency, marking it with at sign Autowired, and letting Spring call the setter after construction. Avoid this style. It allows the bean to exist in a half initialised state between construction and the setter call.
+
+Field injection means putting at sign Autowired directly on a private field. Avoid this style strongly. Field injection bypasses every test isolation strategy, because there is no way to construct the class without Spring. It hides dependencies. It prevents you from making fields final, so the class is not immutable. It is the single most common bad pattern in Spring codebases. Do not do it in new code.
+
+Constructor injection wins on every dimension. The field can be final, so the class is immutable. The class can be instantiated in a plain unit test, without any Spring infrastructure. The compiler refuses to let you forget a dependency, because the parameter is required. And the class screams when it has too many dependencies, because the constructor becomes obviously too long. That screaming is a useful design signal. It tells you the class is doing too much.
+
+Now, bean scopes. Every bean has a scope, which controls how many instances exist and how long they live. The two you will use most are singleton and prototype.
+
+The singleton scope is the default. One shared instance for the entire application context. Created eagerly at startup. This is the right default for the vast majority of beans, because your services are usually stateless, and one shared instance is enough.
+
+The prototype scope means a fresh instance every time someone asks for it. Spring constructs a new bean on every injection or lookup. Reach for prototype only when each user of the bean genuinely needs its own copy.
+
+Web applications add two more scopes. Request scope means one instance per hypertext transfer protocol request. Session scope means one instance per hypertext transfer protocol session.
+
+A trap to know about. A singleton bean that injects a prototype is still a singleton. The prototype dependency is resolved exactly once, when the singleton is constructed. From then on, the singleton holds that one prototype instance forever. If you actually need a fresh prototype on every call, inject Object Provider of the prototype type, or use the at sign Lookup annotation, both of which let you ask for a fresh instance on demand.
+
+Now, the bean lifecycle. After Spring constructs and injects a bean, it can give the bean a chance to finish initialising, and it can warn the bean before shutdown. The two annotations to know are at sign Post Construct and at sign Pre Destroy.
+
+The at sign Post Construct annotation marks a method that runs after the constructor and after all at sign Autowired dependencies are set. This is where you put initialisation logic that depends on the injected fields being populated. You cannot put that logic in the constructor with setter or field injection, because the dependencies are not yet there during construction. With constructor injection, the dependencies are already there, so at sign Post Construct is needed less often, but it is still useful for warming caches or kicking off background work.
+
+The at sign Pre Destroy annotation marks a method that runs when the application context is closing, just before the bean is destroyed. This is the place to release resources, flush buffers, or notify external systems of shutdown.
+
+The lifecycle order is the following. Construct the bean. Inject its dependencies. Run at sign Post Construct. The bean is now usable. The application runs. The context shuts down. Run at sign Pre Destroy. The bean is destroyed.
+
+A real application needs different wiring in different environments. A real database in production. An in memory one in tests. A stub for local development. The at sign Profile annotation lets you tag beans with the environment they belong to.
+
+You write at sign Profile and pass the profile name as a string, on either a configuration method, a configuration class, or a stereotype annotated class. You set the active profile by setting the property spring profiles active, in application properties, or as an environment variable, or via a dash uppercase d java flag. Only beans whose at sign Profile matches the active set get registered.
+
+You can also write expressions in profile names. Exclamation mark profile means active when this profile is not. Pipe means or. Ampersand means and. So at sign Profile of dev pipe test means the bean is active in either dev or test. At sign Profile of exclamation prod means the bean is active in everything except prod.
+
+Hard coding values into Java is a smell. The same code should run in dev, staging, and production with different values for things like database urls, http endpoints, and feature flags. Spring reads configuration from many sources, including properties files, y a m l files, environment variables, and command line flags. Spring exposes the merged result to your beans three ways.
+
+The first way is the at sign Value annotation. You put at sign Value on a constructor parameter, with the property key in dollar curly syntax, and Spring injects the property value at startup. You can also include a default after a colon. So at sign Value of dollar curly h t t p dot timeout colon thirty means inject the h t t p dot timeout property, or thirty if it is missing.
+
+The second way is the Environment object. You inject an Environment reference, and you ask it for properties programmatically, with the get Property method. This is useful when you need conditional logic during construction.
+
+The third way, and the one you should reach for by default, is at sign Configuration Properties. You annotate a record or a class with at sign Configuration Properties of prefix equals some prefix. Spring binds every property under that prefix to the record's components or the class's fields. The result is a typed configuration object you can inject like any other bean. The grouping makes related properties cohesive. The typing means typos and wrong types fail at startup. The i d e gets autocomplete because it can read the record's component names.
+
+Now, aspect oriented programming. There is a class of behaviour that does not belong to any one component but crosses many of them. Logging. Transactions. Security checks. Metrics. Retries. These are called cross cutting concerns, because they cut across the natural object oriented decomposition. Aspect oriented programming, often abbreviated a o p, lets you write a cross cutting concern once and apply it to many methods.
+
+The vocabulary is small but specific. An aspect is a class containing cross cutting behaviour. An advice is a method on the aspect that runs at some specific point in the program. A pointcut is an expression that picks which target methods the advice applies to. A join point is a specific method execution that the advice intercepts.
+
+Spring a o p ships three advice annotations. At sign Before runs the advice before the target method runs. At sign After runs the advice after the target method, whether it returned normally or threw. At sign Around is the most powerful. It wraps the target method entirely. Around advice takes a Proceeding Join Point parameter, and inside the advice body you call proceed to invoke the real method. You can do work before proceed, after proceed, around an exception, or even skip proceed entirely and substitute your own return value.
+
+The pointcut expression in the example, execution open paren star, then the package, then dot dot, then star open close paren close paren, matches any method in any class under the named package. The dot dot in the middle is the wildcard for sub packages. The star is the wildcard for return type or method name. The open paren dot dot close paren at the end is the wildcard for any number of any type of parameter.
+
+How does this actually work at runtime. Spring creates a proxy around every bean whose methods match an aspect's pointcut. The proxy intercepts calls and runs the advice. The bean you inject is not the bean itself. It is the proxy. The proxy delegates to the real bean after running the advice. This is the same proxying mechanism behind at sign Transactional, at sign Cacheable, and Spring Security's method security. Aspect oriented programming is not just a feature you can use. It is a core mechanism that several Spring features rely on.
+
+One important gotcha. Aspect oriented programming works on calls into a bean from outside. A method on a bean that calls another method on the same bean using this dot other method bypasses the proxy. The other method runs directly, with no advice applied. If you need self invocation to go through the aspect, inject the bean into itself, or restructure the code so the second method lives on a different bean.
+
+Finally, application context events. Beans can broadcast events to each other through the container. This decouples a producer from the, possibly many, consumers of an event. The producer does not know who listens. The container handles delivery.
+
+The pattern has three parts. First, you define the event class. Any class is allowed. A record is ideal, because the event is just a data carrier. Second, the producer gets the Application Event Publisher injected into its constructor, and calls publish Event with an event instance. Third, any number of listeners are registered with the at sign Event Listener annotation on a method that takes the event type as its single parameter. Spring discovers these listener methods via reflection at startup. The same reflection mechanics from notebook seven.
+
+Events are synchronous by default. The publish Event call blocks until every listener returns. If you need asynchronous delivery, add at sign Async to the listener method, and at sign Enable Async to a configuration class. Spring also ships built in events you can listen for, like Context Refreshed Event, fired when the application context has finished starting up, and Context Closed Event, fired when it is shutting down. These are useful hooks for one time startup and shutdown work.
+
+That wraps notebook eight. You can now describe a system to Spring and let it do the wiring. The pattern of annotate the class, declare what it needs in the constructor, let the container do the rest, is the bedrock of every Spring notebook ahead. Every annotation we covered, from at sign Component to at sign Around to at sign Event Listener, is something Spring reads at startup via the same reflection mechanics from notebook seven. There is no x m l. There is no factory configuration. There is no manual wiring. You declared what the components are and what they need. Spring constructed the graph.
+
+Notebook nine turns Spring Core into a real web service, with Spring Web. We will build rest controllers with at sign Rest Controller and at sign Request Mapping. We will validate incoming requests with at sign Valid. We will handle errors centrally with at sign Controller Advice. We will call other services with the Rest Client and the Web Client. And we will lock things down with the essentials of Spring Security.
