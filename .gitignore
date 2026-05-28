@@ -1,0 +1,19 @@
+/.idea/
+/.venv/
+*.iml
+.aider*
+.DS_Store
+
+# Java build artifacts
+target/
+build/
+*.class
+*.jar
+*.war
+.gradle/
+out/
+
+# Maven
+.mvn/
+mvnw
+mvnw.cmd
