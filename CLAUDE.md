@@ -31,8 +31,8 @@ concept, and folding it in here would make one catalog card carry two subjects.
 concurrency · jvm · project` — 131 sections. Played in syllabus order; `project` is the capstone
 (a log-analysis CLI) that weaves in every prior course.
 
-**Status**: course 1 (`runtime`, 10 sections) authored and verified. Narration `.tts` not yet
-generated — no wavs in `public/audio/` yet.
+**Status**: courses 1–2 (`runtime`, `syntax` — 20 sections) authored and verified. Narration `.tts`
+not yet generated — no wavs in `public/audio/` yet.
 
 ## The depth contract
 
@@ -67,13 +67,19 @@ public/audio/<course>/   narration wavs
   section and measures slide overflow exactly, which is the defect the other two cannot see.
 - **Slide budget ~950 characters.** At ~1050 a slide clips off the bottom of the panel; tables cost
   more height per character than bullets. `npm run frames` is the authority.
+- **A slide's fenced code lines must be ≤ ~52 characters.** Longer and the `<pre>` scrolls the whole
+  page sideways; `frames.mjs` reports it as `too wide: pre +Npx`. Trim the trailing `// comment`
+  first — the narration is carrying that sentence anyway.
+- **Keep a scene roughly square.** `frames.mjs` fails a scene whose aspect makes fitView shrink the
+  type below ~12pt. Nesting containers all `flow: 'TB'` gives a 0.2:1 ribbon; the fix is `flow:
+  'LR'` on the **deepest** container, not the outer one — turning an outer row sideways just leaves
+  it half-empty beside one tall child.
 - **Edge labels must be short.** A pill riding the midpoint between two wide containers lands on a
   border rather than in the gap. Two peers that don't need an arrow should be `cols: 2`, not an
   edged flow — that was the fix on three scenes in course 1.
 - Adding a scene: define in `src/scenes/<course>/`, register in that folder's `index.ts`.
 - Adding content: add a `Section` under `src/content/<course>/`, list it in that folder's `index.ts`.
 
-## Not yet published
+## Published
 
-This repo has no git history and no remote. `schemabotview/java` is free (the quarry that held the
-name was deleted), and `vite.config.ts` and the Pages workflow already assume `base: /java/`.
+`schemabotview/java`, deployed by GitHub Actions to **graphl.in/java/** on every push to `main`.
