@@ -31,7 +31,7 @@ concept, and folding it in here would make one catalog card carry two subjects.
 concurrency · jvm · project` — 131 sections. Played in syllabus order; `project` is the capstone
 (a log-analysis CLI) that weaves in every prior course.
 
-**Status**: courses 1–4 (`runtime`, `syntax`, `oop`, `types` — 41 sections) authored and verified. Narration `.tts`
+**Status**: courses 1–5 (through `collections` — 53 sections) authored and verified. Narration `.tts`
 not yet generated — no wavs in `public/audio/` yet.
 
 ## The depth contract
@@ -76,6 +76,9 @@ public/audio/<course>/   narration wavs
   type below ~12pt. Nesting containers all `flow: 'TB'` gives a 0.2:1 ribbon; the fix is `flow:
   'LR'` on the **deepest** container, not the outer one — turning an outer row sideways just leaves
   it half-empty beside one tall child.
+- **Keep a leaf's `label` to one rendered line.** The linter's `leafSub` limit of 66 assumes a
+  1–2 line label; a label that wraps steals the sub's room and the sub clips out of the card's
+  bottom border. `npm run check` passes on that — only the frame shows it.
 - **Edge labels must be short.** A pill riding the midpoint between two wide containers lands on a
   border rather than in the gap. Two peers that don't need an arrow should be `cols: 2`, not an
   edged flow — that was the fix on three scenes in course 1.
