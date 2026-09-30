@@ -31,7 +31,7 @@ concept, and folding it in here would make one catalog card carry two subjects.
 concurrency · jvm · project` — 131 sections. Played in syllabus order; `project` is the capstone
 (a log-analysis CLI) that weaves in every prior course.
 
-**Status**: courses 1–9 (through `errors` — 95 sections) authored and verified. Narration `.tts`
+**Status**: courses 1–10 (through `concurrency` — 107 sections) authored and verified. Narration `.tts`
 not yet generated — no wavs in `public/audio/` yet.
 
 ## The depth contract
