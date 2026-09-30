@@ -6,6 +6,7 @@ import { collections } from './collections'
 import { generics } from './generics'
 import { functional } from './functional'
 import { streams } from './streams'
+import { errors } from './errors'
 import type { Course, Section } from './types'
 
 // Course registry, in syllabus order. Courses are added here as each is authored:
@@ -20,6 +21,7 @@ export const COURSES: Record<string, Course> = {
   [generics.id]: generics,
   [functional.id]: functional,
   [streams.id]: streams,
+  [errors.id]: errors,
 }
 
 export type { Course, Section }
