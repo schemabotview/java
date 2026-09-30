@@ -31,7 +31,7 @@ concept, and folding it in here would make one catalog card carry two subjects.
 concurrency · jvm · project` — 131 sections. Played in syllabus order; `project` is the capstone
 (a log-analysis CLI) that weaves in every prior course.
 
-**Status**: courses 1–2 (`runtime`, `syntax` — 20 sections) authored and verified. Narration `.tts`
+**Status**: courses 1–3 (`runtime`, `syntax`, `oop` — 31 sections) authored and verified. Narration `.tts`
 not yet generated — no wavs in `public/audio/` yet.
 
 ## The depth contract
@@ -67,6 +67,8 @@ public/audio/<course>/   narration wavs
   section and measures slide overflow exactly, which is the defect the other two cannot see.
 - **Slide budget ~950 characters.** At ~1050 a slide clips off the bottom of the panel; tables cost
   more height per character than bullets. `npm run frames` is the authority.
+- **Write slides to ~850 characters and code lines to ~50 from the start.** Every course so far
+  has needed a trimming pass because the first draft ran 1050–1350; budgeting up front is cheaper.
 - **A slide's fenced code lines must be ≤ ~52 characters.** Longer and the `<pre>` scrolls the whole
   page sideways; `frames.mjs` reports it as `too wide: pre +Npx`. Trim the trailing `// comment`
   first — the narration is carrying that sentence anyway.
