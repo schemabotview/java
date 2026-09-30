@@ -31,7 +31,8 @@ concept, and folding it in here would make one catalog card carry two subjects.
 concurrency · jvm · project` — 131 sections. Played in syllabus order; `project` is the capstone
 (a log-analysis CLI) that weaves in every prior course.
 
-**Status**: courses 1–11 (through `jvm` — 120 sections) authored and verified. Narration lives in
+**Status**: **all 12 courses / 131 sections authored and verified** (2026-09-30). Build, `check`
+and `frames` clean; every frame looked at. Narration lives in
 the content files and is folded into `scripts/audio-manifest.json`, but no wavs have been generated
 yet — `public/audio/` is empty. Run `scripts/colab_generate_audio.ipynb` on Colab to fill it.
 

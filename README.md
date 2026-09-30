@@ -19,7 +19,7 @@ treeifies, how a virtual thread unmounts from its carrier, why erasure makes `ne
 and the places expertise is actually tested get sections of their own. `project` is the capstone: a
 log-analysis CLI that forces every prior course to be used together.
 
-**Currently authored:** course 1, `runtime` (10 sections).
+**All 12 courses are authored** — 131 sections. Narration audio is not generated yet.
 
 ## Run it
 

@@ -9,6 +9,7 @@ import { streams } from './streams'
 import { errors } from './errors'
 import { concurrency } from './concurrency'
 import { jvm } from './jvm'
+import { project } from './project'
 import type { Course, Section } from './types'
 
 // Course registry, in syllabus order. Courses are added here as each is authored:
@@ -26,6 +27,7 @@ export const COURSES: Record<string, Course> = {
   [errors.id]: errors,
   [concurrency.id]: concurrency,
   [jvm.id]: jvm,
+  [project.id]: project,
 }
 
 export type { Course, Section }
