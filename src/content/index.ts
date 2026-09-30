@@ -3,6 +3,7 @@ import { syntax } from './syntax'
 import { oop } from './oop'
 import { types } from './types-course'
 import { collections } from './collections'
+import { generics } from './generics'
 import type { Course, Section } from './types'
 
 // Course registry, in syllabus order. Courses are added here as each is authored:
@@ -14,6 +15,7 @@ export const COURSES: Record<string, Course> = {
   [oop.id]: oop,
   [types.id]: types,
   [collections.id]: collections,
+  [generics.id]: generics,
 }
 
 export type { Course, Section }
