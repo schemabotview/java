@@ -1,6 +1,7 @@
 import { runtime } from './runtime'
 import { syntax } from './syntax'
 import { oop } from './oop'
+import { types } from './types-course'
 import type { Course, Section } from './types'
 
 // Course registry, in syllabus order. Courses are added here as each is authored:
@@ -10,6 +11,7 @@ export const COURSES: Record<string, Course> = {
   [runtime.id]: runtime,
   [syntax.id]: syntax,
   [oop.id]: oop,
+  [types.id]: types,
 }
 
 export type { Course, Section }
