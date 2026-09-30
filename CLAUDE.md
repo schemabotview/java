@@ -32,9 +32,10 @@ concurrency · jvm · project` — 131 sections. Played in syllabus order; `proj
 (a log-analysis CLI) that weaves in every prior course.
 
 **Status**: **all 12 courses / 131 sections authored and verified** (2026-09-30). Build, `check`
-and `frames` clean; every frame looked at. Narration lives in
-the content files and is folded into `scripts/audio-manifest.json`, but no wavs have been generated
-yet — `public/audio/` is empty. Run `scripts/colab_generate_audio.ipynb` on Colab to fill it.
+and `frames` clean; every frame looked at. Narration lives in the content files and is folded into
+`scripts/audio-manifest.json`; the owner is generating wavs from it via
+`scripts/colab_generate_audio.ipynb` and committing them to `public/audio/<course>/<sectionId>.wav`
+as they land — that run is in progress, so expect `public/audio/` to be partial.
 
 ## The depth contract
 
