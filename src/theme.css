@@ -1,0 +1,13 @@
+/* Java's design surface — the three tokens @graphlearning/shell leaves to the repo.
+   Imported AFTER the shell's stylesheet in main.tsx, so these win the cascade.
+
+   The language's own logo pairing: the cup's blue-steel as the brand, the steam's orange as the
+   counter tone. Blue-steel rather than the orange because four catalog cards are already orange
+   (aws, apache-spark, databricks, linux) and #e76f00 is a shade off apache-spark's #e25a1c; this
+   sits cooler and greyer than python's #4b8bbe, and the orange `###` accent tells them apart at a
+   glance. */
+:root {
+  --brand: #5382a1; /* Java blue-steel — the cup */
+  --brand-hover: #74a3c2; /* lighter steel — the eyebrow's hover state */
+  --accent-2: #e76f00; /* Java orange — the slide's `###` subheading */
+}
